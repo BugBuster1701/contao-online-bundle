@@ -1,0 +1,42 @@
+{
+	"name":"bugbuster/contao-online-bundle",
+	"description":"Contao 4 helper bundle",
+	"keywords":["contao", "member", "user","online"],
+	"type":"contao-bundle",
+	"homepage":"http://contao.ninja",
+	"license":"LGPL-3.0-or-later",
+	"authors":[
+		{
+			"name":"Glen Langer",
+			"homepage":"http://contao.ninja",
+			"role":"Developer"
+		}
+	],
+	"support":{
+		"issues":"https://github.com/BugBuster1701/contao-online-bundle/issues",
+		"source":"https://github.com/BugBuster1701/contao-online-bundle",
+		"forum":"https://community.contao.org/de/forumdisplay.php?119-Sonstige-Erweiterungen"
+	},
+	"require":{
+		"php": "^7.1",
+		"contao/core-bundle": "~4.9"
+	},
+	"require-dev": {
+		"contao/manager-plugin": "^2.0",
+		"friendsofphp/php-cs-fixer": "^2.12"
+	},
+	"conflict": {
+		"contao/manager-plugin": "<2.0 || >=3.0"
+	},
+	"autoload":{
+		"psr-4": {
+			"BugBuster\\OnlineBundle\\": "src/"
+		}
+	},
+	"extra":{
+		"branch-alias": {
+			"dev-develop": "1.0.x-dev"
+		},
+		"contao-manager-plugin": "BugBuster\\OnlineBundle\\ContaoManager\\Plugin"
+	}
+}
