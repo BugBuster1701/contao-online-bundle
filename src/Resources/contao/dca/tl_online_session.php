@@ -13,45 +13,35 @@
 /**
  * Table tl_online_session
  */
-$GLOBALS['TL_DCA']['tl_online_session'] = array
-(
+$GLOBALS['TL_DCA']['tl_online_session'] = [
 
 	// Config
-	'config' => array
-	(
-		'sql' => array
-		(
-			'keys' => array
-			(
+	'config' => [
+		'sql' => [
+			'keys' => [
 				'id' => 'primary',
 				'pid' => 'index',
 				'hash' => 'index'
-			)
-		)
-	),
+			],
+		],
+	],
 
 	// Fields
-	'fields' => array
-	(
-		'id' => array
-		(
-			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
-		),
-		'pid' => array
-		(
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		),
-		'tstamp' => array
-		(
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		),
-		'name' => array
-		(
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'hash' => array
-		(
-			'sql'                     => "varchar(40) NULL"
-		)
-	)
-);
+	'fields' => [
+		'id' => [
+			'sql' => ['type' => 'integer', 'unsigned' => true, 'autoincrement' => true]
+		],
+		'pid' => [
+			'sql' => ['type' => 'integer', 'unsigned' => true, 'default' => 0]
+		],
+		'tstamp' => [
+			'sql' => ['type' => 'integer', 'unsigned' => true, 'default' => 0]
+		],
+		'name' => [
+			'sql' => ['type' => 'string', 'length' => 255, 'default' => '']
+		],
+		'hash' => [
+			'sql' => ['type' => 'string', 'length' => 40, 'notnull' => false]
+		],
+	],
+];
