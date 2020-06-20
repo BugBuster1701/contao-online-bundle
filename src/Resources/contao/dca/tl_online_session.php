@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_online_session'] = [
 			'sql' => ['type' => 'string', 'length' => 255, 'default' => '']
 		],
 		'hash' => [
-			'sql' => ['type' => 'string', 'length' => 40, 'notnull' => false]
+			'sql' => ['type' => 'string', 'length' => 64, 'notnull' => false]
 		],
 	],
 ];

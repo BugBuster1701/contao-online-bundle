@@ -59,7 +59,7 @@ class PostAuthenticateListener
         ;
         $token = json_encode($token);
 
-        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'));
+        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'), false);
 
         // Update session
         \Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time WHERE pid=? AND hash=?")

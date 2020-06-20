@@ -69,7 +69,7 @@ class PostLoginListener
         ;
         $token = json_encode($token);
 
-        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'));
+        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'), false);
 
         // Clean up old sessions
         \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR hash=?')

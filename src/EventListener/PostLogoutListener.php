@@ -58,7 +58,7 @@ class PostLogoutListener
         ;
         $token = json_encode($token);
 
-        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'));
+        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'), false);
 
         // Remove the oldest session for the hash from the database
         \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND hash=? ORDER BY tstamp')
