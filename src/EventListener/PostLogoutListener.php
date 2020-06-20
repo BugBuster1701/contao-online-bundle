@@ -27,10 +27,6 @@ class PostLogoutListener
      * @var string
      */
     protected $strHash;
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    private $framework;
 
     public function __construct()
     {
