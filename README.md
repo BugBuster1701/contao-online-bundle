@@ -1,7 +1,13 @@
-# Contao-Online-Bundle
+# Contao-Online-Bundle (beta)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e3d0161b9fad4df8a9dab380f433a495)](https://www.codacy.com/manual/BugBuster1701/contao-online-bundle?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BugBuster1701/contao-online-bundle&amp;utm_campaign=Badge_Grade)
+
 
 ## About 
 
 Contao 4.9+ helper bundle
+
+The hooks "postLogin", "postLogout" and "postAuthenticate" are used to register the online status of the users (FE/BE).  
+For this purpose, the ID, the time stamp and a hash (hash_hmac,sha256) are created in the table tl_online_session.
+
+This Helper Bundle is still under development and will be used in the future by the bundles "LastLogin" and "BE_User_Online".
