@@ -1,6 +1,6 @@
 {
 	"name":"bugbuster/contao-online-bundle",
-	"description":"Contao 4 helper bundle",
+	"description":"Contao 4 online helper bundle",
 	"keywords":["contao", "member", "user","online"],
 	"type":"contao-bundle",
 	"homepage":"http://contao.ninja",
@@ -35,7 +35,7 @@
 	},
 	"extra":{
 		"branch-alias": {
-			"dev-develop": "1.0.x-dev"
+			"dev-develop": "1.1.x-dev"
 		},
 		"contao-manager-plugin": "BugBuster\\OnlineBundle\\ContaoManager\\Plugin"
 	}

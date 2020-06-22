@@ -32,5 +32,6 @@ class BugBusterOnlineExtension extends Extension
         );
 
         $loader->load('listener.yml');
+        $loader->load('services.yml');
     }
 }

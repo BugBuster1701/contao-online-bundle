@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        public: true
+
+    bugbuster_online.online_session:
+        class: "BugBuster\\OnlineBundle\\Session\\OnlineSession"
+        arguments:
+            - '@database_connection'
+            - '@contao.framework'
