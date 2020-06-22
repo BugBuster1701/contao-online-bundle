@@ -54,9 +54,14 @@ class OnlineSession
         $this->timeout = (int) $this->config->get('sessionTimeout');
     }
 
+    /**
+     * is somebody (FE|BE) online?
+     *
+     * @return boolean
+     */
     public function isSomebodyOnline()
     {
-        $somebody = $this->connection->query('SELECT count(id) AS NUM 
+        $somebody = $this->connection->prepare('SELECT count(id) AS NUM 
                                                 FROM tl_online_session
                                                 WHERE tstamp > :tstamp');
         $timeout = time() - $this->timeout;
