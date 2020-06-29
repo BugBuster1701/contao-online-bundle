@@ -1,4 +1,4 @@
-# Contao-Online-Bundle (beta)
+# Contao-Online-Bundle
 
 [![Latest Stable Version](https://poser.pugx.org/bugbuster/contao-online-bundle/v/stable.svg)](https://packagist.org/packages/bugbuster/contao-online-bundle)
 ![Contao Version](https://img.shields.io/badge/Contao-4.9%2B-orange)
