@@ -18,12 +18,12 @@
 		"forum":"https://community.contao.org/de/forumdisplay.php?119-Sonstige-Erweiterungen"
 	},
 	"require":{
-		"php": "^7.2 || ^8.0",
-		"contao/core-bundle": "~4.9"
+		"php": "^7.4 || ^8.0",
+		"contao/core-bundle": "~4.13"
 	},
 	"require-dev": {
 		"contao/manager-plugin": "^2.0",
-		"friendsofphp/php-cs-fixer": "^2.12"
+		"friendsofphp/php-cs-fixer": "^3.0"
 	},
 	"conflict": {
 		"contao/manager-plugin": "<2.0 || >=3.0"

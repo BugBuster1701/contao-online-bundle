@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of a BugBuster Contao Bundle
  *
- * @copyright  Glen Langer 2020 <http://contao.ninja>
+ * @copyright  Glen Langer 2022 <http://contao.ninja>
  * @author     Glen Langer (BugBuster)
  * @package    Online-Bundle
  * @license    LGPL-3.0-or-later
@@ -57,11 +57,11 @@ class OnlineSession
     /**
      * is somebody (FE|BE) online?
      *
-     * @return boolean
+     * @return bool
      */
     public function isSomebodyOnline()
     {
-        $somebody = $this->connection->prepare('SELECT count(id) AS NUM 
+        $somebody = $this->connection->prepare('SELECT count(id) AS NUM
                                                 FROM tl_online_session
                                                 WHERE tstamp > :tstamp');
         $timeout = time() - $this->timeout;
