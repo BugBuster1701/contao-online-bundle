@@ -68,7 +68,7 @@ class PostLoginListener
         if ($user instanceof BackendUser) {
             $strCookie = 'BE_USER_AUTH';
         }
-        $token = $CookiePrefix.$namespace.$token_name;
+        $token = $_COOKIE[$CookiePrefix.$namespace.$token_name];
         // $token = $container->get('contao.csrf.token_manager')
         //                    ->getToken($container->getParameter('contao.csrf_token_name'))
         //                    ->getValue()

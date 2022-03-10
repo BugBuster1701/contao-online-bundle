@@ -51,13 +51,13 @@ class PostLogoutListener
         $KernelSecret = $container->getParameter('kernel.secret');
         
         if ($user instanceof FrontendUser) {
-            $strCookie = 'FE_USER_AUTH';
+            $strCookie = $intUserId.'FE_USER_AUTH';
             $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
         }
         if ($user instanceof BackendUser) {
-            $strCookie = 'BE_USER_AUTH';
+            $strCookie = $intUserId.'BE_USER_AUTH';
         }
-        $token = $CookiePrefix.$namespace.$token_name;
+        $token = $_COOKIE[$CookiePrefix.$namespace.$token_name];
         // $token = $container->get('contao.csrf.token_manager')
         //                    ->getToken($container->getParameter('contao.csrf_token_name'))
         //                    ->getValue()
