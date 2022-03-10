@@ -62,11 +62,11 @@ class PostLoginListener
         $KernelSecret = $container->getParameter('kernel.secret');
 
         if ($user instanceof FrontendUser) {
-            $strCookie = $intUserId.'FE_USER_AUTH';
+            $strCookie = 'FE_USER_AUTH';
             $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
         }
         if ($user instanceof BackendUser) {
-            $strCookie = $intUserId.'BE_USER_AUTH';
+            $strCookie = 'BE_USER_AUTH';
         }
         $token = $_COOKIE[$CookiePrefix.$namespace.$token_name];
         // $token = $container->get('contao.csrf.token_manager')
@@ -74,7 +74,7 @@ class PostLoginListener
         //                    ->getValue()
         // ;
 
-        $strHash = hash_hmac('sha256', $token.$strCookie, $KernelSecret, false);
+        $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
 
         // Clean up old sessions
         \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR hash=?')
