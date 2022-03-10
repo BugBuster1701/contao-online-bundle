@@ -42,24 +42,28 @@ class PostAuthenticateListener
 
         $strHash = '';
         $time = time();
-
-        if ($user instanceof FrontendUser) {
-            $strCookie = 'FE_USER_AUTH';
-        }
-
-        if ($user instanceof BackendUser) {
-            $strCookie = 'BE_USER_AUTH';
-        }
+        $namespace = '';
 
         // Generate the cookie hash
         $container = System::getContainer();
-        $token = $container->get('contao.csrf.token_manager')
-                           ->getToken($container->getParameter('contao.csrf_token_name'))
-                           ->getValue()
-        ;
-        $token = json_encode($token);
+        $token_name = $container->getParameter('contao.csrf_token_name');
+        $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
+        $KernelSecret = $container->getParameter('kernel.secret');
+        if ($user instanceof FrontendUser) {
+            $strCookie = 'FE_USER_AUTH';
+            $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
+        }
+        if ($user instanceof BackendUser) {
+            $strCookie = 'BE_USER_AUTH';
+        }
+        $token = $CookiePrefix.$namespace.$token_name;
+        // $token = $container->get('contao.csrf.token_manager')
+        //                    ->getToken($container->getParameter('contao.csrf_token_name'))
+        //                    ->getValue()
+        // ;
+        // $token = json_encode($token);
 
-        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'), false);
+        $strHash = hash_hmac('sha256', $token.$strCookie, $KernelSecret, false);
 
         // Update session
         \Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time WHERE pid=? AND hash=?")

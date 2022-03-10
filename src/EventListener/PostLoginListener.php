@@ -43,6 +43,7 @@ class PostLoginListener
     {
         $time = time();
         $strHash = '';
+        $namespace = '';
 
         $intUserId = $user->getData()['id']; // for user id, ugly, but I don't know what's better.
 
@@ -54,22 +55,26 @@ class PostLoginListener
 
         // Generate the cookie hash
 
+        // Generate the cookie hash
+        $container = System::getContainer();
+        $token_name = $container->getParameter('contao.csrf_token_name');
+        $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
+        $KernelSecret = $container->getParameter('kernel.secret');
+
         if ($user instanceof FrontendUser) {
             $strCookie = 'FE_USER_AUTH';
+            $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
         }
-
         if ($user instanceof BackendUser) {
             $strCookie = 'BE_USER_AUTH';
         }
-        // Generate the cookie hash
-        $container = System::getContainer();
-        $token = $container->get('contao.csrf.token_manager')
-                           ->getToken($container->getParameter('contao.csrf_token_name'))
-                           ->getValue()
-        ;
-        $token = json_encode($token);
+        $token = $CookiePrefix.$namespace.$token_name;
+        // $token = $container->get('contao.csrf.token_manager')
+        //                    ->getToken($container->getParameter('contao.csrf_token_name'))
+        //                    ->getValue()
+        // ;
 
-        $strHash = hash_hmac('sha256', $token.$strCookie, $container->getParameter('kernel.secret'), false);
+        $strHash = hash_hmac('sha256', $token.$strCookie, $KernelSecret, false);
 
         // Clean up old sessions
         \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR hash=?')
