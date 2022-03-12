@@ -34,8 +34,6 @@ class PostLogoutListener
 
     /**
      * onPostLogout.
-     *
-     * @return array 
      */
     public function onPostLogout(User $user)
     {
