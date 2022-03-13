@@ -20,8 +20,7 @@ $GLOBALS['TL_DCA']['tl_online_session'] = [
 		'sql' => [
 			'keys' => [
 				'id' => 'primary',
-				'pid' => 'index',
-				'loginhash' => 'index'
+				'pid' => 'index'
 			],
 		],
 	],
