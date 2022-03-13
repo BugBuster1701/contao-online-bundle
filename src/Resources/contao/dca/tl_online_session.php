@@ -21,7 +21,7 @@ $GLOBALS['TL_DCA']['tl_online_session'] = [
 			'keys' => [
 				'id' => 'primary',
 				'pid' => 'index',
-				'hash' => 'index'
+				'loginhash' => 'index'
 			],
 		],
 	],
@@ -37,10 +37,10 @@ $GLOBALS['TL_DCA']['tl_online_session'] = [
 		'tstamp' => [
 			'sql' => ['type' => 'integer', 'unsigned' => true, 'default' => 0]
 		],
-		'name' => [
+		'instanceof' => [
 			'sql' => ['type' => 'string', 'length' => 255, 'default' => '']
 		],
-		'hash' => [
+		'loginhash' => [
 			'sql' => ['type' => 'string', 'length' => 64, 'notnull' => false]
 		],
 	],

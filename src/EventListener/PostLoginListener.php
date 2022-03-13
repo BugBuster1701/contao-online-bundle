@@ -57,33 +57,25 @@ class PostLoginListener
 
         // Generate the cookie hash
         $container = System::getContainer();
-        $token_name = $container->getParameter('contao.csrf_token_name');
-        $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
         $KernelSecret = $container->getParameter('kernel.secret');
 
         if ($user instanceof FrontendUser) {
             $strCookie = 'FE_USER_AUTH';
-            $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
         }
         if ($user instanceof BackendUser) {
             $strCookie = 'BE_USER_AUTH';
         }
-        $token = $_COOKIE[$CookiePrefix.$namespace.$token_name];
-        // $token = $container->get('contao.csrf.token_manager')
-        //                    ->getToken($container->getParameter('contao.csrf_token_name'))
-        //                    ->getValue()
-        // ;
 
-        $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
+        $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $KernelSecret, false);
 
         // Clean up old sessions
-        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR hash=?')
-                                ->execute(($time - $timeout), $strHash)
+        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR loginhash=?')
+                                ->execute(($time - $timeout), $strHashLogin)
         ;
 
         // Save the session in the database
-        \Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, name, hash) VALUES (?, ?, ?, ?)')
-                                ->execute($intUserId, $time, $strCookie, $strHash)
+        \Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, instanceof, loginhash) VALUES (?, ?, ?, ?)')
+                                ->execute($intUserId, $time, $strCookie, $strHashLogin)
         ;
     }
 }

@@ -56,16 +56,11 @@ class PostLogoutListener
             $strCookie = 'BE_USER_AUTH';
         }
         $token = $_COOKIE[$CookiePrefix.$namespace.$token_name];
-        // $token = $container->get('contao.csrf.token_manager')
-        //                    ->getToken($container->getParameter('contao.csrf_token_name'))
-        //                    ->getValue()
-        // ;
-        // $token = json_encode($token);
 
         $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
 
         // Remove the oldest session for the hash from the database
-        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND hash=? ORDER BY tstamp')
+        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
                                 ->limit(1)
                                 ->execute($intUserId, $strHash)
         ;

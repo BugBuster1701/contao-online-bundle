@@ -58,17 +58,14 @@ class PostAuthenticateListener
             $strCookie = 'BE_USER_AUTH';
         }
         $token = $_COOKIE[$CookiePrefix.$namespace.$token_name];
-        // $token = $container->get('contao.csrf.token_manager')
-        //                    ->getToken($container->getParameter('contao.csrf_token_name'))
-        //                    ->getValue()
-        // ;
-        // $token = json_encode($token);
 
         $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
+        $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $KernelSecret, false);
 
         // Update session
-        \Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time WHERE pid=? AND hash=?")
-                                ->execute($intUserId, $strHash)
+        \Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time, loginhash='$strHash'
+                                            WHERE pid=? AND (loginhash=? OR loginhash=?)")
+                                ->execute($intUserId, $strHash, $strHashLogin)
         ;
     }
 }
