@@ -42,10 +42,9 @@ class PostLoginListener
     public function onPostLogin(User $user): void
     {
         $time = time();
-        $strHash = '';
-        $namespace = '';
+        $strHashLogin = '';
 
-        $intUserId = $user->getData()['id']; // for user id, ugly, but I don't know what's better.
+        $intUserId = $user->getData()['id'];
 
         $this->framework->initialize();
 

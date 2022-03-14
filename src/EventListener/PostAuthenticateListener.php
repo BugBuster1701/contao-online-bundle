@@ -38,9 +38,10 @@ class PostAuthenticateListener
      */
     public function onPostAuthenticate(User $user): void
     {
-        $intUserId = $user->getData()['id']; // for user id, ugly, but I don't know what's better.
+        $intUserId = $user->getData()['id'];
 
         $strHash = '';
+        $strHashLogin = '';
         $time = time();
         $namespace = '';
 

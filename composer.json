@@ -35,7 +35,7 @@
 	},
 	"extra":{
 		"branch-alias": {
-			"dev-develop": "1.1.x-dev"
+			"dev-develop": "1.3.x-dev"
 		},
 		"contao-manager-plugin": "BugBuster\\OnlineBundle\\ContaoManager\\Plugin"
 	}

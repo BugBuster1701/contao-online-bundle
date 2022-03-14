@@ -65,9 +65,7 @@ class OnlineSession
                                                 FROM tl_online_session
                                                 WHERE tstamp > :tstamp');
         $timeout = time() - $this->timeout;
-        #$somebody->execute(['tstamp' => $timeout]);
         $resultSet = $somebody->executeQuery(['tstamp' => $timeout])->fetchAllAssociative();
-        #$somebody = $somebody->fetch(\PDO::FETCH_OBJ);
 
         return (bool) $resultSet['NUM'];
     }

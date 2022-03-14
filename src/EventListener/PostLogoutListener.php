@@ -35,9 +35,9 @@ class PostLogoutListener
     /**
      * onPostLogout.
      */
-    public function onPostLogout(User $user)
+    public function onPostLogout(User $user): void
     {
-        $intUserId = $user->getData()['id']; // for user id, ugly, but I don't know what's better.
+        $intUserId = $user->getData()['id'];
 
         $strHash = '';
         $namespace = '';
@@ -47,7 +47,7 @@ class PostLogoutListener
         $token_name = $container->getParameter('contao.csrf_token_name');
         $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
         $KernelSecret = $container->getParameter('kernel.secret');
-        
+
         if ($user instanceof FrontendUser) {
             $strCookie = 'FE_USER_AUTH';
             $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
