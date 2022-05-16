@@ -58,7 +58,7 @@ class PostAuthenticateListener
         if ($user instanceof BackendUser) {
             $strCookie = 'BE_USER_AUTH';
         }
-        $token = $_COOKIE[$CookiePrefix.$namespace.$token_name];
+        $token = $_COOKIE[$CookiePrefix.$namespace.$token_name] ?? '8472';
 
         $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
         $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $KernelSecret, false);
