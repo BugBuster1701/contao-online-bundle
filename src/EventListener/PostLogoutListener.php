@@ -18,6 +18,7 @@ use Contao\BackendUser;
 use Contao\FrontendUser;
 use Contao\System;
 use Contao\User;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class PostLogoutListener
 {
@@ -35,7 +36,7 @@ class PostLogoutListener
     /**
      * onPostLogout.
      */
-    public function onPostLogout(User $user): void
+    public function onPostLogout(LogoutEvent $logoutEvent, User $user): void
     {
         $intUserId = $user->getData()['id'];
 
@@ -60,7 +61,7 @@ class PostLogoutListener
         $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
 
         // Remove the oldest session for the hash from the database
-        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
+        \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
                                 ->limit(1)
                                 ->execute($intUserId, $strHash)
         ;

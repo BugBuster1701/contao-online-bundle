@@ -2,19 +2,40 @@ services:
     _defaults:
         public: true
 
-    bugbuster_online.post_login_listener:
-        class: "BugBuster\\OnlineBundle\\EventListener\\PostLoginListener"
-        arguments:
-            - "@contao.framework"
-        tags:
-            - { name: contao.hook, hook: postLogin, method: onPostLogin, priority: 0 }
+    # bugbuster_online.post_login_listener:
+    #     class: "BugBuster\\OnlineBundle\\EventListener\\PostLoginListener"
+    #     arguments:
+    #         - "@contao.framework"
+    #     tags:
+    #         - { name: contao.hook, hook: postLogin, method: onPostLogin, priority: 0 }
 
-    bugbuster_online.post_logout_listener:
-        class: "BugBuster\\OnlineBundle\\EventListener\\PostLogoutListener"
-        tags:
-            - { name: contao.hook, hook: postLogout, method: onPostLogout, priority: 0 }
+    # bugbuster_online.post_logout_listener:
+    #     class: "BugBuster\\OnlineBundle\\EventListener\\PostLogoutListener"
+    #     tags:
+    #         - { name: contao.hook, hook: postLogout, method: onPostLogout, priority: 0 }
 
-    bugbuster_online.post_authenticate_listener:
-        class: "BugBuster\\OnlineBundle\\EventListener\\PostAuthenticateListener"
+    # bugbuster_online.post_authenticate_listener:
+    #     class: "BugBuster\\OnlineBundle\\EventListener\\PostAuthenticateListener"
+    #     tags:
+    #         - { name: contao.hook, hook: postAuthenticate, method: onPostAuthenticate, priority: 0 }
+
+    BugBuster\OnlineBundle\EventListener\PostLoginListener:
         tags:
-            - { name: contao.hook, hook: postAuthenticate, method: onPostAuthenticate, priority: 0 }
+            - name: 'kernel.event_listener'
+              event: 'Symfony\Component\Security\Http\Event\LoginSuccessEvent'
+              dispatcher: security.event_dispatcher.main
+              method: onPostLogin
+            
+    BugBuster\OnlineBundle\EventListener\PostLogoutListener:
+        tags:
+            - name: 'kernel.event_listener'
+              event: 'Symfony\Component\Security\Http\Event\LogoutEvent'
+              dispatcher: security.event_dispatcher.main
+              method: onPostLogout
+
+    BugBuster\OnlineBundle\EventListener\PostAuthenticateListener:
+        tags:
+            - name: 'kernel.event_listener'
+              event: 'Symfony\Component\Security\Http\Event\LoginSuccessEvent'
+              dispatcher: security.event_dispatcher.main
+              method: onPostAuthenticate

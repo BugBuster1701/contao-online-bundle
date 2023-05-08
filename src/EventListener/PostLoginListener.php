@@ -20,6 +20,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FrontendUser;
 use Contao\System;
 use Contao\User;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class PostLoginListener
 {
@@ -39,7 +40,7 @@ class PostLoginListener
     /**
      * onPostLogin.
      */
-    public function onPostLogin(User $user): void
+    public function onPostLogin(LogoutEvent $logoutEvent, User $user): void
     {
         $time = time();
         $strHashLogin = '';
@@ -68,12 +69,12 @@ class PostLoginListener
         $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $KernelSecret, false);
 
         // Clean up old sessions
-        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR loginhash=?')
+        \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR loginhash=?')
                                 ->execute(($time - $timeout), $strHashLogin)
         ;
 
         // Save the session in the database
-        \Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, instanceof, loginhash) VALUES (?, ?, ?, ?)')
+        \Contao\Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, instanceof, loginhash) VALUES (?, ?, ?, ?)')
                                 ->execute($intUserId, $time, $strCookie, $strHashLogin)
         ;
     }

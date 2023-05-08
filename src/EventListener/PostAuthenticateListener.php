@@ -18,6 +18,7 @@ use Contao\BackendUser;
 use Contao\FrontendUser;
 use Contao\System;
 use Contao\User;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class PostAuthenticateListener
 {
@@ -36,7 +37,7 @@ class PostAuthenticateListener
      * onPostAuthenticate
      * Hook postAuthenticate.
      */
-    public function onPostAuthenticate(User $user): void
+    public function onPostAuthenticate(LogoutEvent $logoutEvent, User $user): void
     {
         $intUserId = $user->getData()['id'];
 
@@ -64,7 +65,7 @@ class PostAuthenticateListener
         $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $KernelSecret, false);
 
         // Update session
-        \Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time, loginhash='$strHash'
+        \Contao\Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time, loginhash='$strHash'
                                             WHERE pid=? AND (loginhash=? OR loginhash=?)")
                                 ->execute($intUserId, $strHash, $strHashLogin)
         ;
