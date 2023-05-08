@@ -25,6 +25,7 @@ services:
               event: 'Symfony\Component\Security\Http\Event\LoginSuccessEvent'
               dispatcher: security.event_dispatcher.main
               method: onPostLogin
+              priority: 7 
             
     BugBuster\OnlineBundle\EventListener\PostLogoutListener:
         tags:
@@ -32,6 +33,7 @@ services:
               event: 'Symfony\Component\Security\Http\Event\LogoutEvent'
               dispatcher: security.event_dispatcher.main
               method: onPostLogout
+              priority: 7 
 
     BugBuster\OnlineBundle\EventListener\PostAuthenticateListener:
         tags:
@@ -39,3 +41,4 @@ services:
               event: 'Symfony\Component\Security\Http\Event\LoginSuccessEvent'
               dispatcher: security.event_dispatcher.main
               method: onPostAuthenticate
+              priority: 7 
