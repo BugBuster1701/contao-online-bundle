@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-use Contao\BackendUser;
-use Contao\FrontendUser;
-use Contao\System;
-use Contao\User;
+use Contao\CoreBundle\Routing\ScopeMatcher;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
-
+use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
+use Psr\Log\LoggerInterface;
 class PostLogoutListener
 {
     /**
@@ -29,31 +29,44 @@ class PostLogoutListener
      */
     protected $strHash;
 
-    public function __construct()
-    {
+    /**
+     * @internal
+     */
+    public function __construct(
+        private HttpUtils $httpUtils,
+        private ScopeMatcher $scopeMatcher,
+        private Security $security,
+        private LoggerInterface|null $logger,
+    ) {
     }
 
     /**
      * onPostLogout.
      */
-    public function onPostLogout(LogoutEvent $logoutEvent, User $user): void
+    public function __invoke(LogoutEvent $event): void
     {
-        $intUserId = $user->getData()['id'];
+        $request = $event->getRequest();
 
+        $token = $this->security->getToken();
+        if ($token instanceof TokenInterface) {
+            $user = $token->getUser();
+            $intUserId = $user->id;
+        }
+        
         $strHash = '';
         $namespace = '';
 
         // Generate the cookie hash
-        $container = System::getContainer();
+        $container = \Contao\System::getContainer();
         $token_name = $container->getParameter('contao.csrf_token_name');
         $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
         $KernelSecret = $container->getParameter('kernel.secret');
 
-        if ($user instanceof FrontendUser) {
+        if ($this->scopeMatcher->isFrontendRequest($request)) {
             $strCookie = 'FE_USER_AUTH';
             $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
         }
-        if ($user instanceof BackendUser) {
+        if ($this->scopeMatcher->isBackendRequest($request)) {
             $strCookie = 'BE_USER_AUTH';
         }
         $token = $_COOKIE[$CookiePrefix.$namespace.$token_name] ?? '8472';
