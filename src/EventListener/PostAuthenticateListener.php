@@ -37,7 +37,7 @@ class PostAuthenticateListener
      * onPostAuthenticate
      * Hook postAuthenticate.
      */
-    public function onPostAuthenticate(LogoutEvent $logoutEvent, User $user): void
+    public function onPostAuthenticate(User $user): void
     {
         $intUserId = $user->getData()['id'];
 
