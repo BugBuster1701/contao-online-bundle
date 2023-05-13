@@ -6,10 +6,10 @@ services:
         class: "BugBuster\\OnlineBundle\\EventListener\\PostLoginListener"
         arguments:
             - '@contao.framework'
+            - '@request_stack'
             - '@security.http_utils'
             - '@contao.routing.scope_matcher'
             - '@security.helper'
-            - '@session'
             - '%session.storage.options%'
             - '@logger'
             - '%kernel.secret%'

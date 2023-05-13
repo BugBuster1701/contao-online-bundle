@@ -19,11 +19,11 @@ namespace BugBuster\OnlineBundle\EventListener;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Contao\CoreBundle\Monolog\ContaoContext;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Psr\Log\LoggerInterface;
 
 class PostLoginListener
@@ -34,10 +34,10 @@ class PostLoginListener
      */
     public function __construct(
         private ContaoFramework $framework, //kann wech
+        private RequestStack $requestStack,
         private HttpUtils $httpUtils,
         private ScopeMatcher $scopeMatcher,
         private Security $security,
-        private SessionInterface $session,
         private array|null $sessionStorageOptions = null,
         private LoggerInterface|null $logger,
         private string $secret
@@ -53,6 +53,7 @@ class PostLoginListener
         $strHashLogin = '';
 
         $request = $event->getRequest();
+        $session = $this->requestStack->getSession();
 
         $token = $this->security->getToken();
         if ($token instanceof TokenInterface) {
@@ -93,7 +94,7 @@ class PostLoginListener
         ;
 
         $this->logger?->info(
-            sprintf('User "%s" has time and lastUsed "%s"', $user->username, $time, $this->session->getMetadataBag()->getLastUsed()),
+            sprintf('User "%s" has time and lastUsed "%s"', $user->username, $time, $session->getMetadataBag()->getLastUsed()),
             ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
         );
     }
