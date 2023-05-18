@@ -53,27 +53,15 @@ class PostLogoutListener
             $user = $token->getUser();
             $intUserId = $user->id;
         
-            //$strHash = '';
-            //$namespace = '';
-
-            // Generate the cookie hash
-            //$container = \Contao\System::getContainer();
-            //$token_name = $container->getParameter('contao.csrf_token_name');
-            //$CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
-            
-
             $request = $event->getRequest();
 
             if ($this->scopeMatcher->isFrontendRequest($request)) {
                 $strCookie = 'FE_USER_AUTH';
-                //$namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
             }
             if ($this->scopeMatcher->isBackendRequest($request)) {
                 $strCookie = 'BE_USER_AUTH';
             }
-            //$token = $_COOKIE[$CookiePrefix.$namespace.$token_name] ?? '8472';
 
-            //$strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
             $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
             // Remove the oldest session for the hash from the database

@@ -5,7 +5,6 @@ services:
     bugbuster_online.post_login_listener:
         class: "BugBuster\\OnlineBundle\\EventListener\\PostLoginListener"
         arguments:
-            - '@contao.framework'
             - '@request_stack'
             - '@security.http_utils'
             - '@contao.routing.scope_matcher'
@@ -37,6 +36,16 @@ services:
     #     tags:
     #         - { name: contao.hook, hook: postAuthenticate, method: onPostAuthenticate, priority: 0 }
 
+    bugbuster_online.post_authenticate_listener:
+        class: "BugBuster\\OnlineBundle\\EventListener\\PostAuthenticateListener"
+        arguments:
+            - '@request_stack'
+            - '@contao.routing.scope_matcher'
+            - '@security.helper'
+            - '@logger'
+            - '%kernel.secret%'
+        tags:
+            - { name: 'kernel.event_listener', event: 'security.authentication.success', method: 'onPostAuthenticate' }
 
     # contao.listener.security.logout:
     #     class: Contao\CoreBundle\EventListener\Security\LogoutListener
