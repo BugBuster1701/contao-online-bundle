@@ -54,10 +54,6 @@ class PostAuthenticateListener
         $strCookie = '8472';
         $strHashLogin = '';
         $time = time();
-        $this->logger?->info(
-            sprintf('postAuthenticate "%s" DB ready', $time),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, 'DebugGlen')]
-        );
 
         $token = $this->security->getToken();
         if ($token instanceof TokenInterface) {
@@ -66,10 +62,6 @@ class PostAuthenticateListener
         } else {
             return;
         }
-        $this->logger?->info(
-            sprintf('postAuthenticate "%s" user-id "%s" ready', $time, $intUserId),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, 'DebugGlen')]
-        );
 
         if (($user = $this->security->getUser()) instanceof FrontendUser) {
             $strCookie = 'FE_USER_AUTH';
@@ -90,10 +82,10 @@ class PostAuthenticateListener
                                 ->execute($intUserId, $strCookie, $strHashLogin)
         ;
 
-        $this->logger?->info(
-            sprintf('User "%s" has time "%s" update hash: "%s"', $user->username, $time, $strHashLogin),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
-        );
+        // $this->logger?->info(
+        //     sprintf('User "%s" ("%s") has time "%s" update hash: "%s" PostAuthenticateListener', $user->username, $strCookie, $time, $strHashLogin),
+        //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
+        // );
     }
 
     /**

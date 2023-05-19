@@ -79,9 +79,9 @@ class PostLoginListener
                                 ->execute($intUserId, $time, $strCookie, $strHashLogin)
         ;
 
-        $this->logger?->info(
-            sprintf('User "%s" ("%s") has time "%s" PostLoginListener', $user->username, $strCookie, $time),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
-        );
+        // $this->logger?->info(
+        //     sprintf('User "%s" ("%s") has time "%s" PostLoginListener', $user->username, $strCookie, $time),
+        //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
+        // );
     }
 }
