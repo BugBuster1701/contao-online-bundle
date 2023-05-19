@@ -14,62 +14,74 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-use Contao\CoreBundle\Routing\ScopeMatcher;
+use Contao\BackendUser;
+use Contao\FrontendUser;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Psr\Log\LoggerInterface;
 
 class PostAuthenticateListener
 {
 
     public function __construct(
-        private RequestStack $requestStack,
-        private ScopeMatcher $scopeMatcher,
         private Security $security,
         private LoggerInterface|null $logger,
+        private Connection $connection,
         private string $secret
     )    {
     }
 
     /**
      * onPostAuthenticate
-     * Hook postAuthenticate.
+     * https://symfony.com/doc/current/components/http_kernel.html#component-http-kernel-kernel-terminate
+     * vendor/bin/contao-console debug:event-dispatcher kernel.terminate
      */
-    public function onPostAuthenticate(AuthenticationSuccessEvent $event): void
+    public function __invoke(TerminateEvent $event): void
     {
-        // $strHash = '';
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
+        // Without the DB table, the online bundle cannot work
+        if (!$this->canRunDbQuery()) {
+            return;
+        }
+
+        $strCookie = '8472';
         $strHashLogin = '';
         $time = time();
-        // $namespace = '';
-
-        // Generate the cookie hash
-        // $container = System::getContainer();
-        // $token_name = $container->getParameter('contao.csrf_token_name');
-        // $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
-        // $KernelSecret = $container->getParameter('kernel.secret');
+        $this->logger?->info(
+            sprintf('postAuthenticate "%s" DB ready', $time),
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, 'DebugGlen')]
+        );
 
         $token = $this->security->getToken();
         if ($token instanceof TokenInterface) {
             $user = $token->getUser();
             $intUserId = $user->id;
+        } else {
+            return;
         }
+        $this->logger?->info(
+            sprintf('postAuthenticate "%s" user-id "%s" ready', $time, $intUserId),
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, 'DebugGlen')]
+        );
 
-        $request = $this->requestStack->getCurrentRequest();
-        //$session = $this->requestStack->getSession();
-
-        if ($this->scopeMatcher->isFrontendRequest($request)) {
+        if (($user = $this->security->getUser()) instanceof FrontendUser) {
             $strCookie = 'FE_USER_AUTH';
-            //$namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
         }
-        if ($this->scopeMatcher->isBackendRequest($request)) {
+        if (($user = $this->security->getUser()) instanceof BackendUser) {
             $strCookie = 'BE_USER_AUTH';
         }
-        // $token = $_COOKIE[$CookiePrefix.$namespace.$token_name] ?? '8472';
+        $this->logger?->info(
+            sprintf('postAuthenticate "%s" scope: "%s"', $time, $strCookie),
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, 'DebugGlen')]
+        );
 
-        // $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
         $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
         // Update session
@@ -79,8 +91,21 @@ class PostAuthenticateListener
         ;
 
         $this->logger?->info(
-            sprintf('User "%s" has time "%s" update', $user->username, $time),
+            sprintf('User "%s" has time "%s" update hash: "%s"', $user->username, $time, $strHashLogin),
             ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
         );
+    }
+
+    /**
+     * Checks if a database connection can be established and the table exist.
+     */
+    private function canRunDbQuery(): bool
+    {
+        try {
+            return $this->connection->isConnected()
+                && $this->connection->createSchemaManager()->tablesExist(['tl_online_session']);
+        } catch (Exception) {
+            return false;
+        }
     }
 }

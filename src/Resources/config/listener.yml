@@ -5,8 +5,6 @@ services:
     bugbuster_online.post_login_listener:
         class: "BugBuster\\OnlineBundle\\EventListener\\PostLoginListener"
         arguments:
-            - '@request_stack'
-            - '@security.http_utils'
             - '@contao.routing.scope_matcher'
             - '@security.helper'
             - '%session.storage.options%'
@@ -15,15 +13,9 @@ services:
         tags:
             - name: 'kernel.event_listener'
 
-    # bugbuster_online.post_logout_listener:
-    #     class: "BugBuster\\OnlineBundle\\EventListener\\PostLogoutListener"
-    #     tags:
-    #         - { name: contao.hook, hook: postLogout, method: onPostLogout, priority: 0 }
-
     bugbuster_online.post_logout_listener:
         class: "BugBuster\\OnlineBundle\\EventListener\\PostLogoutListener"
         arguments:
-            - '@security.http_utils'
             - '@contao.routing.scope_matcher'
             - '@security.helper'
             - '@logger'
@@ -31,28 +23,12 @@ services:
         tags:
             - name: 'kernel.event_listener'
 
-    # bugbuster_online.post_authenticate_listener:
-    #     class: "BugBuster\\OnlineBundle\\EventListener\\PostAuthenticateListener"
-    #     tags:
-    #         - { name: contao.hook, hook: postAuthenticate, method: onPostAuthenticate, priority: 0 }
-
     bugbuster_online.post_authenticate_listener:
-        class: "BugBuster\\OnlineBundle\\EventListener\\PostAuthenticateListener"
+        class: BugBuster\OnlineBundle\EventListener\PostAuthenticateListener
         arguments:
-            - '@request_stack'
-            - '@contao.routing.scope_matcher'
             - '@security.helper'
             - '@logger'
+            - '@database_connection'
             - '%kernel.secret%'
         tags:
-            - { name: 'kernel.event_listener', event: 'security.authentication.success', method: 'onPostAuthenticate' }
-
-    # contao.listener.security.logout:
-    #     class: Contao\CoreBundle\EventListener\Security\LogoutListener
-    #     arguments:
-    #         - '@security.http_utils'
-    #         - '@contao.routing.scope_matcher'
-    #         - '@security.helper'
-    #         - '@logger'
-    #     tags:
-    #         - kernel.event_listener
+            - { name: 'kernel.event_listener' }

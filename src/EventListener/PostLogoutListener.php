@@ -17,10 +17,10 @@ namespace BugBuster\OnlineBundle\EventListener;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
-use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 use Psr\Log\LoggerInterface;
+
 class PostLogoutListener
 {
     /**
@@ -34,7 +34,6 @@ class PostLogoutListener
      * @internal
      */
     public function __construct(
-        private HttpUtils $httpUtils,
         private ScopeMatcher $scopeMatcher,
         private Security $security,
         private LoggerInterface|null $logger,
@@ -71,7 +70,7 @@ class PostLogoutListener
             ;
 
             $this->logger?->info(
-                sprintf('User "%s" has logged out (postlogout)', $user->username),
+                sprintf('User "%s" ("%s") has time "%s" PostLogoutListener', $user->username, $strCookie, time()),
                 ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
             );
         }
