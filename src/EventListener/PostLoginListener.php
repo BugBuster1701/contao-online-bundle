@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of a BugBuster Contao Bundle
  *
- * @copyright  Glen Langer 2022 <http://contao.ninja>
+ * @copyright  Glen Langer 2023 <http://contao.ninja>
  * @author     Glen Langer (BugBuster)
  * @package    Online-Bundle
  * @license    LGPL-3.0-or-later
@@ -14,16 +14,15 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-use Contao\CoreBundle\Routing\ScopeMatcher;
 use Contao\CoreBundle\Monolog\ContaoContext;
-use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
+use Contao\CoreBundle\Routing\ScopeMatcher;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 class PostLoginListener
 {
-
     /**
      * Contructor.
      */
@@ -33,7 +32,7 @@ class PostLoginListener
         private array|null $sessionStorageOptions = null,
         private LoggerInterface|null $logger,
         private string $secret
-    )    {
+    ) {
     }
 
     /**
@@ -53,9 +52,9 @@ class PostLoginListener
         }
 
         $timeout = (int) ($this->sessionStorageOptions['gc_maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
-        
-        # sollte nicht vorkommen aber sicher ist sicher
-        if ($timeout == 0) {
+
+        // sollte nicht vorkommen aber sicher ist sicher
+        if (0 === $timeout) {
             $timeout = 3600;
         }
 
@@ -71,9 +70,9 @@ class PostLoginListener
 
         // Clean up old sessions
         \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR loginhash=?')
-                                ->execute(($time - $timeout), $strHashLogin)
+                                ->execute($time - $timeout, $strHashLogin)
         ;
-        
+
         // Save the session in the database
         \Contao\Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, instanceof, loginhash) VALUES (?, ?, ?, ?)')
                                 ->execute($intUserId, $time, $strCookie, $strHashLogin)

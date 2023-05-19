@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of a BugBuster Contao Bundle
  *
- * @copyright  Glen Langer 2022 <http://contao.ninja>
+ * @copyright  Glen Langer 2023 <http://contao.ninja>
  * @author     Glen Langer (BugBuster)
  * @package    Online-Bundle
  * @license    LGPL-3.0-or-later
@@ -16,10 +16,10 @@ namespace BugBuster\OnlineBundle\EventListener;
 
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\Routing\ScopeMatcher;
-use Symfony\Component\Security\Http\Event\LogoutEvent;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class PostLogoutListener
 {
@@ -51,7 +51,7 @@ class PostLogoutListener
         if ($token instanceof TokenInterface) {
             $user = $token->getUser();
             $intUserId = $user->id;
-        
+
             $request = $event->getRequest();
 
             if ($this->scopeMatcher->isFrontendRequest($request)) {
@@ -66,7 +66,7 @@ class PostLogoutListener
             // Remove the oldest session for the hash from the database
             \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
                                     ->limit(1)
-                                    ->execute($intUserId, $strHashLogin) //$strHash)
+                                    ->execute($intUserId, $strHashLogin)
             ;
 
             // $this->logger?->info(

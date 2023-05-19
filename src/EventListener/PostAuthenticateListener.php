@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of a BugBuster Contao Bundle
  *
- * @copyright  Glen Langer 2022 <http://contao.ninja>
+ * @copyright  Glen Langer 2023 <http://contao.ninja>
  * @author     Glen Langer (BugBuster)
  * @package    Online-Bundle
  * @license    LGPL-3.0-or-later
@@ -15,30 +15,29 @@ declare(strict_types=1);
 namespace BugBuster\OnlineBundle\EventListener;
 
 use Contao\BackendUser;
-use Contao\FrontendUser;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\FrontendUser;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
-use Psr\Log\LoggerInterface;
 
 class PostAuthenticateListener
 {
-
     public function __construct(
         private Security $security,
         private LoggerInterface|null $logger,
         private Connection $connection,
         private string $secret
-    )    {
+    ) {
     }
 
     /**
      * onPostAuthenticate
      * https://symfony.com/doc/current/components/http_kernel.html#component-http-kernel-kernel-terminate
-     * vendor/bin/contao-console debug:event-dispatcher kernel.terminate
+     * vendor/bin/contao-console debug:event-dispatcher kernel.terminate.
      */
     public function __invoke(TerminateEvent $event): void
     {
