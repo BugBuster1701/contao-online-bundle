@@ -16,57 +16,84 @@ namespace BugBuster\OnlineBundle\EventListener;
 
 use Contao\BackendUser;
 use Contao\FrontendUser;
-use Contao\System;
-use Contao\User;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
+use Psr\Log\LoggerInterface;
 
 class PostAuthenticateListener
 {
-    /**
-     * Authentication hash.
-     *
-     * @var string
-     */
-    protected $strHash;
 
-    public function __construct()
-    {
+    public function __construct(
+        private Security $security,
+        private LoggerInterface|null $logger,
+        private Connection $connection,
+        private string $secret
+    )    {
     }
 
     /**
      * onPostAuthenticate
-     * Hook postAuthenticate.
+     * https://symfony.com/doc/current/components/http_kernel.html#component-http-kernel-kernel-terminate
+     * vendor/bin/contao-console debug:event-dispatcher kernel.terminate
      */
-    public function onPostAuthenticate(User $user): void
+    public function __invoke(TerminateEvent $event): void
     {
-        $intUserId = $user->getData()['id'];
+        if (!$event->isMainRequest()) {
+            return;
+        }
 
-        $strHash = '';
+        // Without the DB table, the online bundle cannot work
+        if (!$this->canRunDbQuery()) {
+            return;
+        }
+
+        $strCookie = '8472';
         $strHashLogin = '';
         $time = time();
-        $namespace = '';
 
-        // Generate the cookie hash
-        $container = System::getContainer();
-        $token_name = $container->getParameter('contao.csrf_token_name');
-        $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
-        $KernelSecret = $container->getParameter('kernel.secret');
-
-        if ($user instanceof FrontendUser) {
-            $strCookie = 'FE_USER_AUTH';
-            $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
+        $token = $this->security->getToken();
+        if ($token instanceof TokenInterface) {
+            $user = $token->getUser();
+            $intUserId = $user->id;
+        } else {
+            return;
         }
-        if ($user instanceof BackendUser) {
+
+        if (($user = $this->security->getUser()) instanceof FrontendUser) {
+            $strCookie = 'FE_USER_AUTH';
+        }
+        if (($user = $this->security->getUser()) instanceof BackendUser) {
             $strCookie = 'BE_USER_AUTH';
         }
-        $token = $_COOKIE[$CookiePrefix.$namespace.$token_name] ?? '8472';
 
-        $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
-        $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $KernelSecret, false);
+        $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
         // Update session
-        \Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time, loginhash='$strHash'
-                                            WHERE pid=? AND (loginhash=? OR loginhash=?)")
-                                ->execute($intUserId, $strHash, $strHashLogin)
+        \Contao\Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time
+                                            WHERE pid=? AND instanceof=? AND loginhash=?")
+                                ->execute($intUserId, $strCookie, $strHashLogin)
         ;
+
+        // $this->logger?->info(
+        //     sprintf('User "%s" ("%s") has time "%s" update hash: "%s" PostAuthenticateListener', $user->username, $strCookie, $time, $strHashLogin),
+        //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
+        // );
+    }
+
+    /**
+     * Checks if a database connection can be established and the table exist.
+     */
+    private function canRunDbQuery(): bool
+    {
+        try {
+            return $this->connection->isConnected()
+                && $this->connection->createSchemaManager()->tablesExist(['tl_online_session']);
+        } catch (Exception) {
+            return false;
+        }
     }
 }

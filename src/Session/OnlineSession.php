@@ -14,27 +14,10 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\Session;
 
-use Contao\Config;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Doctrine\DBAL\Connection;
 
 class OnlineSession
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    private $framework;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
     /**
      * Session Timeout.
      *
@@ -42,16 +25,9 @@ class OnlineSession
      */
     private $timeout;
 
-    public function __construct(Connection $connection, ContaoFramework $framework)
+    public function __construct(private Connection $connection, private array|null $sessionStorageOptions = null)
     {
-        $this->connection = $connection;
-        $this->framework = $framework;
-
-        $this->framework->initialize();
-
-        /* @var Config $config */
-        $this->config = $this->framework->getAdapter(Config::class);
-        $this->timeout = (int) $this->config->get('sessionTimeout');
+        $this->timeout = (int) ($this->sessionStorageOptions['gc_maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
     }
 
     /**

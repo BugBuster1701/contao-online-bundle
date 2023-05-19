@@ -5,16 +5,30 @@ services:
     bugbuster_online.post_login_listener:
         class: "BugBuster\\OnlineBundle\\EventListener\\PostLoginListener"
         arguments:
-            - "@contao.framework"
+            - '@contao.routing.scope_matcher'
+            - '@security.helper'
+            - '%session.storage.options%'
+            - '@logger'
+            - '%kernel.secret%'
         tags:
-            - { name: contao.hook, hook: postLogin, method: onPostLogin, priority: 0 }
+            - name: 'kernel.event_listener'
 
     bugbuster_online.post_logout_listener:
         class: "BugBuster\\OnlineBundle\\EventListener\\PostLogoutListener"
+        arguments:
+            - '@contao.routing.scope_matcher'
+            - '@security.helper'
+            - '@logger'
+            - '%kernel.secret%'
         tags:
-            - { name: contao.hook, hook: postLogout, method: onPostLogout, priority: 0 }
+            - name: 'kernel.event_listener'
 
     bugbuster_online.post_authenticate_listener:
-        class: "BugBuster\\OnlineBundle\\EventListener\\PostAuthenticateListener"
+        class: BugBuster\OnlineBundle\EventListener\PostAuthenticateListener
+        arguments:
+            - '@security.helper'
+            - '@logger'
+            - '@database_connection'
+            - '%kernel.secret%'
         tags:
-            - { name: contao.hook, hook: postAuthenticate, method: onPostAuthenticate, priority: 0 }
+            - { name: 'kernel.event_listener' }

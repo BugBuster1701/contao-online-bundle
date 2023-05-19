@@ -14,67 +14,74 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-use Contao\BackendUser;
-use Contao\Config;
-use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\FrontendUser;
-use Contao\System;
-use Contao\User;
+use Contao\CoreBundle\Routing\ScopeMatcher;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
+use Psr\Log\LoggerInterface;
 
 class PostLoginListener
 {
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    private $framework;
 
     /**
      * Contructor.
      */
-    public function __construct(ContaoFramework $framework)
-    {
-        $this->framework = $framework;
+    public function __construct(
+        private ScopeMatcher $scopeMatcher,
+        private Security $security,
+        private array|null $sessionStorageOptions = null,
+        private LoggerInterface|null $logger,
+        private string $secret
+    )    {
     }
 
     /**
      * onPostLogin.
      */
-    public function onPostLogin(User $user): void
+    public function __invoke(LoginSuccessEvent $event): void
     {
         $time = time();
         $strHashLogin = '';
 
-        $intUserId = $user->getData()['id'];
+        $request = $event->getRequest();
 
-        $this->framework->initialize();
+        $token = $this->security->getToken();
+        if ($token instanceof TokenInterface) {
+            $user = $token->getUser();
+            $intUserId = $user->id;
+        }
 
-        /** @var Config $config */
-        $config = $this->framework->getAdapter(Config::class);
-        $timeout = (int) $config->get('sessionTimeout');
+        $timeout = (int) ($this->sessionStorageOptions['gc_maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
+        
+        # sollte nicht vorkommen aber sicher ist sicher
+        if ($timeout == 0) {
+            $timeout = 3600;
+        }
 
         // Generate the cookie hash
-
-        // Generate the cookie hash
-        $container = System::getContainer();
-        $KernelSecret = $container->getParameter('kernel.secret');
-
-        if ($user instanceof FrontendUser) {
+        if ($this->scopeMatcher->isFrontendRequest($request)) {
             $strCookie = 'FE_USER_AUTH';
         }
-        if ($user instanceof BackendUser) {
+        if ($this->scopeMatcher->isBackendRequest($request)) {
             $strCookie = 'BE_USER_AUTH';
         }
 
-        $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $KernelSecret, false);
+        $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
         // Clean up old sessions
-        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR loginhash=?')
+        \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR loginhash=?')
                                 ->execute(($time - $timeout), $strHashLogin)
         ;
-
+        
         // Save the session in the database
-        \Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, instanceof, loginhash) VALUES (?, ?, ?, ?)')
+        \Contao\Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, instanceof, loginhash) VALUES (?, ?, ?, ?)')
                                 ->execute($intUserId, $time, $strCookie, $strHashLogin)
         ;
+
+        // $this->logger?->info(
+        //     sprintf('User "%s" ("%s") has time "%s" PostLoginListener', $user->username, $strCookie, $time),
+        //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
+        // );
     }
 }

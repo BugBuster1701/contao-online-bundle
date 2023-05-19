@@ -6,4 +6,4 @@ services:
         class: "BugBuster\\OnlineBundle\\Session\\OnlineSession"
         arguments:
             - '@database_connection'
-            - '@contao.framework'
+            - '%session.storage.options%'

@@ -14,10 +14,12 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-use Contao\BackendUser;
-use Contao\FrontendUser;
-use Contao\System;
-use Contao\User;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\CoreBundle\Routing\ScopeMatcher;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
+use Psr\Log\LoggerInterface;
 
 class PostLogoutListener
 {
@@ -28,41 +30,49 @@ class PostLogoutListener
      */
     protected $strHash;
 
-    public function __construct()
-    {
+    /**
+     * @internal
+     */
+    public function __construct(
+        private ScopeMatcher $scopeMatcher,
+        private Security $security,
+        private LoggerInterface|null $logger,
+        private string $secret
+    ) {
     }
 
     /**
      * onPostLogout.
      */
-    public function onPostLogout(User $user): void
+    public function __invoke(LogoutEvent $event): void
     {
-        $intUserId = $user->getData()['id'];
+        $token = $this->security->getToken();
 
-        $strHash = '';
-        $namespace = '';
+        if ($token instanceof TokenInterface) {
+            $user = $token->getUser();
+            $intUserId = $user->id;
+        
+            $request = $event->getRequest();
 
-        // Generate the cookie hash
-        $container = System::getContainer();
-        $token_name = $container->getParameter('contao.csrf_token_name');
-        $CookiePrefix = $container->getParameter('contao.csrf_cookie_prefix');
-        $KernelSecret = $container->getParameter('kernel.secret');
+            if ($this->scopeMatcher->isFrontendRequest($request)) {
+                $strCookie = 'FE_USER_AUTH';
+            }
+            if ($this->scopeMatcher->isBackendRequest($request)) {
+                $strCookie = 'BE_USER_AUTH';
+            }
 
-        if ($user instanceof FrontendUser) {
-            $strCookie = 'FE_USER_AUTH';
-            $namespace = !empty($_SERVER['HTTPS']) && 'off' !== strtolower($_SERVER['HTTPS']) ? 'https-' : '';
+            $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
+
+            // Remove the oldest session for the hash from the database
+            \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
+                                    ->limit(1)
+                                    ->execute($intUserId, $strHashLogin) //$strHash)
+            ;
+
+            // $this->logger?->info(
+            //     sprintf('User "%s" ("%s") has time "%s" PostLogoutListener', $user->username, $strCookie, time()),
+            //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
+            // );
         }
-        if ($user instanceof BackendUser) {
-            $strCookie = 'BE_USER_AUTH';
-        }
-        $token = $_COOKIE[$CookiePrefix.$namespace.$token_name] ?? '8472';
-
-        $strHash = hash_hmac('sha256', $token.$intUserId.$strCookie, $KernelSecret, false);
-
-        // Remove the oldest session for the hash from the database
-        \Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
-                                ->limit(1)
-                                ->execute($intUserId, $strHash)
-        ;
     }
 }
