@@ -69,10 +69,6 @@ class PostAuthenticateListener
         if (($user = $this->security->getUser()) instanceof BackendUser) {
             $strCookie = 'BE_USER_AUTH';
         }
-        $this->logger?->info(
-            sprintf('postAuthenticate "%s" scope: "%s"', $time, $strCookie),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, 'DebugGlen')]
-        );
 
         $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
