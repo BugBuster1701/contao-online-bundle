@@ -70,7 +70,7 @@ class PostLogoutListener
             //                         ->limit(1)
             //                         ->execute($intUserId, $strHashLogin)
             // ;
-            $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE pid=:$pid AND loginhash=:loginhash ORDER BY tstamp');
+            $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE pid=:pid AND loginhash=:loginhash ORDER BY tstamp limit 1');
             $stmt->executeStatement(['pid' => $intUserId, 'loginhash' => $strHashLogin]);
     
             // $this->logger?->info(

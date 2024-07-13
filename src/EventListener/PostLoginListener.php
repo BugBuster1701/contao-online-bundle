@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-use Contao\CoreBundle\Monolog\ContaoContext;
+# use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
