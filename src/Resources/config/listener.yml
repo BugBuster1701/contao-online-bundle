@@ -10,6 +10,7 @@ services:
             - '%session.storage.options%'
             - '@logger'
             - '%kernel.secret%'
+            - '@database_connection'
         tags:
             - name: 'kernel.event_listener'
 
@@ -20,6 +21,7 @@ services:
             - '@security.helper'
             - '@logger'
             - '%kernel.secret%'
+            - '@database_connection'
         tags:
             - name: 'kernel.event_listener'
 

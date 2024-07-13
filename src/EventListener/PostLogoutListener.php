@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-use Contao\CoreBundle\Monolog\ContaoContext;
+# use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\Routing\ScopeMatcher;
+use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
@@ -37,7 +38,8 @@ class PostLogoutListener
         private ScopeMatcher $scopeMatcher,
         private Security $security,
         private LoggerInterface|null $logger,
-        private string $secret
+        private string $secret,
+        private Connection $connection
     ) {
     }
 
@@ -64,11 +66,13 @@ class PostLogoutListener
             $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
             // Remove the oldest session for the hash from the database
-            \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
-                                    ->limit(1)
-                                    ->execute($intUserId, $strHashLogin)
-            ;
-
+            // \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE pid=? AND loginhash=? ORDER BY tstamp')
+            //                         ->limit(1)
+            //                         ->execute($intUserId, $strHashLogin)
+            // ;
+            $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE pid=:$pid AND loginhash=:loginhash ORDER BY tstamp');
+            $stmt->executeStatement(['pid' => $intUserId, 'loginhash' => $strHashLogin]);
+    
             // $this->logger?->info(
             //     sprintf('User "%s" ("%s") has time "%s" PostLogoutListener', $user->username, $strCookie, time()),
             //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
