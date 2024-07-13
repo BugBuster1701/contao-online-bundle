@@ -1,7 +1,7 @@
 # Contao-Online-Bundle
 
 [![Latest Stable Version](https://poser.pugx.org/bugbuster/contao-online-bundle/v/stable.svg)](https://packagist.org/packages/bugbuster/contao-online-bundle)
-![Contao Version](https://img.shields.io/badge/Contao-5.1-orange) ![Contao Version](https://img.shields.io/badge/Contao-4.13-orange)
+![Contao Version](https://img.shields.io/badge/Contao-5.3-orange) ![Contao Version](https://img.shields.io/badge/Contao-4.13-orange)
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/bugbuster/contao-online-bundle)
 ![GitHub issues](https://img.shields.io/github/issues/BugBuster1701/contao-online-bundle)
 [![License](https://poser.pugx.org/bugbuster/contao-online-bundle/license.svg)](https://packagist.org/packages/bugbuster/contao-online-bundle)
