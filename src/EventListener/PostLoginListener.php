@@ -32,8 +32,8 @@ class PostLoginListener
         private Security $security,
         private string $secret,
         private Connection $connection,
-        private array|null $sessionStorageOptions = null,
-        private LoggerInterface|null $logger
+        private LoggerInterface|null $logger,
+        private array|null $sessionStorageOptions = null
     ) {
     }
 

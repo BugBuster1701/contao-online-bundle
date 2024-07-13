@@ -9,8 +9,8 @@ services:
             - '@security.helper'
             - '%kernel.secret%'
             - '@database_connection'
-            - '%session.storage.options%'
             - '@logger'
+            - '%session.storage.options%'
         tags:
             - name: 'kernel.event_listener'
 
