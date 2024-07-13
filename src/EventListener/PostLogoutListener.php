@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-# use Contao\CoreBundle\Monolog\ContaoContext;
+// use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
@@ -39,7 +39,7 @@ class PostLogoutListener
         private Security $security,
         private string $secret,
         private Connection $connection,
-        private LoggerInterface|null $logger
+        private LoggerInterface|null $logger,
     ) {
     }
 
@@ -68,11 +68,12 @@ class PostLogoutListener
             // Remove the oldest session for the hash from the database
             $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE pid=:pid AND loginhash=:loginhash ORDER BY tstamp limit 1');
             $stmt->executeStatement(['pid' => $intUserId, 'loginhash' => $strHashLogin]);
-    
-            // $this->logger?->info(
-            //     sprintf('User "%s" ("%s") has time "%s" PostLogoutListener', $user->username, $strCookie, time()),
-            //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
-            // );
+
+            // $this->logger?->info(     sprintf('User "%s" ("%s") has time "%s"
+
+            // PostLogoutListener', $user->username, $strCookie, time()),     ['contao' =>
+
+            // new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)] );
         }
     }
 }

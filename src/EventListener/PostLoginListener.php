@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace BugBuster\OnlineBundle\EventListener;
 
-# use Contao\CoreBundle\Monolog\ContaoContext;
+// use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
@@ -33,7 +33,7 @@ class PostLoginListener
         private string $secret,
         private Connection $connection,
         private LoggerInterface|null $logger,
-        private array|null $sessionStorageOptions = null
+        private array|null $sessionStorageOptions = null,
     ) {
     }
 
@@ -74,13 +74,11 @@ class PostLoginListener
         $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE tstamp<:tstamp OR loginhash=:loginhash');
         $stmt->executeStatement(['tstamp' => $time - $timeout, 'loginhash' => $strHashLogin]);
 
-
         // Save the session in the database
         $this->connection->insert('tl_online_session', ['pid' => $intUserId, 'tstamp' => $time, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);
 
-        // $this->logger?->info(
-        //     sprintf('User "%s" ("%s") has time "%s" PostLoginListener', $user->username, $strCookie, $time),
-        //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
-        // );
+        // $this->logger?->info(     sprintf('User "%s" ("%s") has time "%s"
+        // PostLoginListener', $user->username, $strCookie, $time),     ['contao' => new
+        // ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)] );
     }
 }
