@@ -25,8 +25,10 @@ class OnlineSession
      */
     private $timeout;
 
-    public function __construct(private Connection $connection, private array|null $sessionStorageOptions = null)
-    {
+    public function __construct(
+        private Connection $connection,
+        private array|null $sessionStorageOptions = null,
+    ) {
         $this->timeout = (int) ($this->sessionStorageOptions['gc_maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
     }
 

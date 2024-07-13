@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace BugBuster\OnlineBundle\EventListener;
 
 use Contao\BackendUser;
-# use Contao\CoreBundle\Monolog\ContaoContext;
+// use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\FrontendUser;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -30,7 +30,7 @@ class PostAuthenticateListener
         private Security $security,
         private Connection $connection,
         private string $secret,
-        private LoggerInterface|null $logger
+        private LoggerInterface|null $logger,
     ) {
     }
 
@@ -73,13 +73,16 @@ class PostAuthenticateListener
 
         // Update session
         $this->connection->update('tl_online_session',
-                                ['tstamp' => $time],
-                                ['pid' => $intUserId, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);
-        
-        // $this->logger?->info(
-        //     sprintf('User "%s" ("%s") has time "%s" update hash: "%s" PostAuthenticateListener', $user->username, $strCookie, $time, $strHashLogin),
-        //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
-        // );
+            ['tstamp' => $time],
+            ['pid' => $intUserId, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);
+
+        // $this->logger?->info(     sprintf('User "%s" ("%s") has time "%s" update hash:
+
+        // "%s" PostAuthenticateListener', $user->username, $strCookie, $time,
+
+        // $strHashLogin),     ['contao' => new ContaoContext(__METHOD__,
+
+        // ContaoContext::ACCESS, $user->username)] );
     }
 
     /**
