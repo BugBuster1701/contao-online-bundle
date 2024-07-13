@@ -30,10 +30,10 @@ class PostLoginListener
     public function __construct(
         private ScopeMatcher $scopeMatcher,
         private Security $security,
-        private array|null $sessionStorageOptions = null,
-        private LoggerInterface|null $logger,
         private string $secret,
-        private Connection $connection
+        private Connection $connection,
+        private LoggerInterface|null $logger,
+        private array|null $sessionStorageOptions = null
     ) {
     }
 

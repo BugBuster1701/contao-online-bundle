@@ -7,10 +7,10 @@ services:
         arguments:
             - '@contao.routing.scope_matcher'
             - '@security.helper'
-            - '%session.storage.options%'
-            - '@logger'
             - '%kernel.secret%'
             - '@database_connection'
+            - '@logger'
+            - '%session.storage.options%'
         tags:
             - name: 'kernel.event_listener'
 
@@ -19,9 +19,9 @@ services:
         arguments:
             - '@contao.routing.scope_matcher'
             - '@security.helper'
-            - '@logger'
             - '%kernel.secret%'
             - '@database_connection'
+            - '@logger'
         tags:
             - name: 'kernel.event_listener'
 
@@ -29,8 +29,8 @@ services:
         class: BugBuster\OnlineBundle\EventListener\PostAuthenticateListener
         arguments:
             - '@security.helper'
-            - '@logger'
             - '@database_connection'
             - '%kernel.secret%'
+            - '@logger'
         tags:
             - { name: 'kernel.event_listener' }
