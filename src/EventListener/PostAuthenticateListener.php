@@ -72,10 +72,6 @@ class PostAuthenticateListener
         $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
         // Update session
-        // \Contao\Database::getInstance()->prepare("UPDATE tl_online_session SET tstamp=$time
-        //                                     WHERE pid=? AND instanceof=? AND loginhash=?")
-        //                         ->execute($intUserId, $strCookie, $strHashLogin)
-        // ;
         $this->connection->update('tl_online_session',
                                 ['tstamp' => $time],
                                 ['pid' => $intUserId, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);

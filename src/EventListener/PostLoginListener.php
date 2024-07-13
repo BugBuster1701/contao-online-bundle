@@ -71,18 +71,13 @@ class PostLoginListener
         $strHashLogin = hash_hmac('sha256', $intUserId.$strCookie, $this->secret, false);
 
         // Clean up old sessions
-        // \Contao\Database::getInstance()->prepare('DELETE FROM tl_online_session WHERE tstamp<? OR loginhash=?')
-        //                         ->execute($time - $timeout, $strHashLogin)
-        // ;
         $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE tstamp<:tstamp OR loginhash=:loginhash');
         $stmt->executeStatement(['tstamp' => $time - $timeout, 'loginhash' => $strHashLogin]);
 
 
         // Save the session in the database
-        // \Contao\Database::getInstance()->prepare('INSERT INTO tl_online_session (pid, tstamp, instanceof, loginhash) VALUES (?, ?, ?, ?)')
-        //                         ->execute($intUserId, $time, $strCookie, $strHashLogin)
-        // ;
         $this->connection->insert('tl_online_session', ['pid' => $intUserId, 'tstamp' => $time, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);
+
         // $this->logger?->info(
         //     sprintf('User "%s" ("%s") has time "%s" PostLoginListener', $user->username, $strCookie, $time),
         //     ['contao' => new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)]
