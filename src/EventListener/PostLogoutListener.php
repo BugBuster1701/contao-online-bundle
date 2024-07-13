@@ -37,9 +37,9 @@ class PostLogoutListener
     public function __construct(
         private ScopeMatcher $scopeMatcher,
         private Security $security,
-        private LoggerInterface|null $logger,
         private string $secret,
-        private Connection $connection
+        private Connection $connection,
+        private LoggerInterface|null $logger
     ) {
     }
 

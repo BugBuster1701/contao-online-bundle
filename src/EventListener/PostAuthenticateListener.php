@@ -28,9 +28,9 @@ class PostAuthenticateListener
 {
     public function __construct(
         private Security $security,
-        private LoggerInterface|null $logger,
         private Connection $connection,
-        private string $secret
+        private string $secret,
+        private LoggerInterface|null $logger
     ) {
     }
 
