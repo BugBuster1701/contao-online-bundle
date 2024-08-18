@@ -19,7 +19,7 @@ use Contao\CoreBundle\Routing\ScopeMatcher;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class PostLogoutListener
