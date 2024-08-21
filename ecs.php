@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * @copyright  Glen Langer 2024 <http://contao.ninja>
  * @author     Glen Langer (BugBuster)
- * @package    Contao Online-Bundle
+ * @package    Contao Online Bundle
  * @link       https://github.com/BugBuster1701/contao-online-bundle
  *
  * @license    LGPL-3.0-or-later
@@ -15,29 +15,24 @@ declare(strict_types=1);
  * please view the LICENSE file that was distributed with this source code.
  */
 
+use Contao\EasyCodingStandard\Set\SetList;
 use PhpCsFixer\Fixer\Comment\HeaderCommentFixer;
-// use PhpCsFixer\Fixer\Whitespace\MethodChainingIndentationFixer;
-use PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
-return static function (ECSConfig $ecsConfig): void {
-    $ecsConfig->sets([__DIR__.'/../vendor/contao/easy-coding-standard/config/contao.php']);
-
-    $ecsConfig->skip([
+return ECSConfig::configure()
+    ->withSets([SetList::CONTAO])
+    // Adjust the configuration according to your needs.
+    // ->withFileExtensions(['php'])
+    ->withPaths([
+        __DIR__.'/src',
+        __DIR__.'/ecs.php',
+    ])
+    ->withSkip([
         'src/Resources/contao/*',
-        // MethodChainingIndentationFixer::class => [
-        //     '*/DependencyInjection/Configuration.php',
-        // ],
-        // TrailingCommaInMultilineFixer::class => [
-        //     'src/Controller/FrontendModule/VisitorsFrontendController.php',
-        // ]
-    ]);
-
-    $ecsConfig->ruleWithConfiguration(HeaderCommentFixer::class, [
+    ])
+    ->withConfiguredRule(HeaderCommentFixer::class, [
         'header' => "This file is part of a BugBuster Contao Bundle.\n\n@copyright  Glen Langer ".date('Y')." <http://contao.ninja>\n@author     Glen Langer (BugBuster)\n@package    Contao Online Bundle\n@link       https://github.com/BugBuster1701/contao-online-bundle\n\n@license    LGPL-3.0-or-later\nFor the full copyright and license information,\nplease view the LICENSE file that was distributed with this source code.",
-    ]);
-
-    $ecsConfig->parallel();
-    $ecsConfig->lineEnding("\n");
-    $ecsConfig->cacheDirectory(sys_get_temp_dir().'/ecs_default_cache');
-};
+    ])
+    ->withParallel()
+    ->withCache(sys_get_temp_dir().'/ecs/ecs')
+;

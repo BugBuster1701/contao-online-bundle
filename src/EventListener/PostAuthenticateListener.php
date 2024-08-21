@@ -20,9 +20,9 @@ use Contao\FrontendUser;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class PostAuthenticateListener
 {
@@ -76,12 +76,10 @@ class PostAuthenticateListener
             ['tstamp' => $time],
             ['pid' => $intUserId, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);
 
+        unset($user);
         // $this->logger?->info(     sprintf('User "%s" ("%s") has time "%s" update hash:
-
         // "%s" PostAuthenticateListener', $user->username, $strCookie, $time,
-
         // $strHashLogin),     ['contao' => new ContaoContext(__METHOD__,
-
         // ContaoContext::ACCESS, $user->username)] );
     }
 

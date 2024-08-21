@@ -18,8 +18,8 @@ namespace BugBuster\OnlineBundle\EventListener;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class PostLogoutListener
@@ -70,9 +70,7 @@ class PostLogoutListener
             $stmt->executeStatement(['pid' => $intUserId, 'loginhash' => $strHashLogin]);
 
             // $this->logger?->info(     sprintf('User "%s" ("%s") has time "%s"
-
             // PostLogoutListener', $user->username, $strCookie, time()),     ['contao' =>
-
             // new ContaoContext(__METHOD__, ContaoContext::ACCESS, $user->username)] );
         }
     }
