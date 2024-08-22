@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /*
- * This file is part of a BugBuster Contao Bundle
+ * This file is part of a BugBuster Contao Bundle.
  *
- * @copyright  Glen Langer 2023 <http://contao.ninja>
+ * @copyright  Glen Langer 2024 <http://contao.ninja>
  * @author     Glen Langer (BugBuster)
  * @package    Contao Online Bundle
  * @link       https://github.com/BugBuster1701/contao-online-bundle
@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace BugBuster\OnlineBundle\EventListener;
 
 use Contao\BackendUser;
-// use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\FrontendUser;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
