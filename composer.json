@@ -49,7 +49,7 @@
         "cs-fixer": [
             "@ecs"
         ],
-		"ecs": "vendor/bin/ecs check --fix"
+		"ecs": "vendor/bin/ecs check --fix --clear-cache"
     },
 	"config": {
 		"allow-plugins": {
