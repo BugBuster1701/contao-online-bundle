@@ -3,26 +3,28 @@
 declare(strict_types=1);
 
 /*
- * This file is part of a BugBuster Contao Bundle
+ * This file is part of a BugBuster Contao Bundle.
  *
- * @copyright  Glen Langer 2023 <http://contao.ninja>
+ * @copyright  Glen Langer 2024 <http://contao.ninja>
  * @author     Glen Langer (BugBuster)
- * @package    Online-Bundle
+ * @package    Contao Online Bundle
+ * @link       https://github.com/BugBuster1701/contao-online-bundle
+ *
  * @license    LGPL-3.0-or-later
- * @see        https://github.com/BugBuster1701/contao-online-bundle
+ * For the full copyright and license information,
+ * please view the LICENSE file that was distributed with this source code.
  */
 
 namespace BugBuster\OnlineBundle\EventListener;
 
 use Contao\BackendUser;
-// use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\FrontendUser;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Security;
 
 class PostAuthenticateListener
 {
@@ -76,12 +78,10 @@ class PostAuthenticateListener
             ['tstamp' => $time],
             ['pid' => $intUserId, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);
 
+        unset($user);
         // $this->logger?->info(     sprintf('User "%s" ("%s") has time "%s" update hash:
-
         // "%s" PostAuthenticateListener', $user->username, $strCookie, $time,
-
         // $strHashLogin),     ['contao' => new ContaoContext(__METHOD__,
-
         // ContaoContext::ACCESS, $user->username)] );
     }
 
