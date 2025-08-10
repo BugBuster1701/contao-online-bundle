@@ -46,7 +46,8 @@ class OnlineSession
                                                 FROM tl_online_session
                                                 WHERE tstamp > :tstamp');
         $timeout = time() - $this->timeout;
-        $resultSet = $somebody->executeQuery(['tstamp' => $timeout])->fetchAllAssociative();
+        $somebody->bindValue('tstamp', $timeout);
+        $resultSet = $somebody->executeQuery()->fetchAllAssociative();
 
         return (bool) $resultSet['NUM'];
     }
