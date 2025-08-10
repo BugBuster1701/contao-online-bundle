@@ -75,7 +75,9 @@ class PostLoginListener
 
         // Clean up old sessions
         $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE tstamp<:tstamp OR loginhash=:loginhash');
-        $stmt->executeStatement(['tstamp' => $time - $timeout, 'loginhash' => $strHashLogin]);
+        $stmt->bindValue('tstamp', $time - $timeout);
+        $stmt->bindValue('loginhash', $strHashLogin);
+        $stmt->executeStatement();
 
         // Save the session in the database
         $this->connection->insert('tl_online_session', ['pid' => $intUserId, 'tstamp' => $time, 'instanceof' => $strCookie, 'loginhash' => $strHashLogin]);

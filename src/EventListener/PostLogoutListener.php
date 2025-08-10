@@ -70,7 +70,9 @@ class PostLogoutListener
 
             // Remove the oldest session for the hash from the database
             $stmt = $this->connection->prepare('DELETE FROM tl_online_session WHERE pid=:pid AND loginhash=:loginhash ORDER BY tstamp limit 1');
-            $stmt->executeStatement(['pid' => $intUserId, 'loginhash' => $strHashLogin]);
+            $stmt->bindValue('pid', $intUserId);
+            $stmt->bindValue('loginhash', $strHashLogin);
+            $stmt->executeStatement();
 
             // $this->logger?->info(     sprintf('User "%s" ("%s") has time "%s"
             // PostLogoutListener', $user->username, $strCookie, time()),     ['contao' =>
