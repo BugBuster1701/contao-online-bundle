@@ -1,7 +1,7 @@
 # Contao-Online-Bundle
 
 [![Latest Stable Version](https://poser.pugx.org/bugbuster/contao-online-bundle/v/stable.svg)](https://packagist.org/packages/bugbuster/contao-online-bundle)
-![Contao Version](https://img.shields.io/badge/Contao-5.4-orange) ![Contao Version](https://img.shields.io/badge/Contao-5.3-orange) ![Contao Version](https://img.shields.io/badge/Contao-4.13-orange)
+![Contao Version](https://img.shields.io/badge/Contao-5.7-orange) ![Contao Version](https://img.shields.io/badge/Contao-5.3-orange) ![Contao Version](https://img.shields.io/badge/Contao-4.13-orange)
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/bugbuster/contao-online-bundle)
 ![GitHub issues](https://img.shields.io/github/issues/BugBuster1701/contao-online-bundle)
 [![License](https://poser.pugx.org/bugbuster/contao-online-bundle/license.svg)](https://packagist.org/packages/bugbuster/contao-online-bundle)
@@ -10,9 +10,9 @@
 
 
 ## About 
-### Contao 5.4 helper bundle
+### Contao 5.7 helper bundle
 
-Use Version 1.4+
+Use Version 1.5+
 
 The Events LoginSuccessEvent, LogoutEvent and TerminateEvent are used to register the online status of the users (FE/BE).  
 For this purpose, the ID, the time stamp and a hash (hash_hmac,sha256) are created in the table tl_online_session.

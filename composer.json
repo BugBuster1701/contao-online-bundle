@@ -18,8 +18,8 @@
 		"forum":"https://community.contao.org/de/forumdisplay.php?119-Sonstige-Erweiterungen"
 	},
 	"require":{
-		"php": "^8.2",
-		"contao/core-bundle": ">=5.4.0,<5.7.0",
+		"php": "^8.3",
+		"contao/core-bundle": ">=5.6.0,<5.8.0",
 		"doctrine/dbal": "^3.6.2 || ^4.3",
 		"symfony/security-core": "^6.4 || ^7.0",
 		"symfony/security-http": "^6.4 || ^7.0"
@@ -37,9 +37,6 @@
 		}
 	},
 	"extra":{
-		"branch-alias": {
-			"dev-develop": "1.4.x-dev"
-		},
 		"contao-manager-plugin": "BugBuster\\OnlineBundle\\ContaoManager\\Plugin"
 	},
     "scripts": {
